@@ -15,19 +15,32 @@ Hlavní skript pro aktualizaci submodulů a údržbu repozitáře.
 - Detekuje, které submoduly byly aktualizovány
 - **Pouze při změnách:** Automaticky aktualizuje tabulku verzí v README.md pro všechny addony
 - **Pouze při změnách:** Vytvoří commit s popisem změn
+- **Vynucená aktualizace:** Parametr `--force-update` umožní aktualizovat README i bez změn
 - Volitelně pushne změny do remote repozitáře
 - **Plně automatické** - při přidání nového submodulu se automaticky zahrne
 - **Optimalizované** - nic nedělá, pokud nebyly žádné aktualizace
 
 **Použití:**
 ```bash
-./update_submodules.sh [--auto-push]
+./update_submodules.sh [--auto-push] [--force-update]
 ```
 
 **Parametry:**
 - `--auto-push`: Automaticky pushovat změny bez dotazu
+- `--force-update`: Vynutit aktualizaci README i bez změn submodulů
 - `--help`: Zobrazit nápovědu
 
+**Příklad výstupu (s vynucenou aktualizací):**
+```
+[INFO] Začíná aktualizace submodulů...
+[INFO] Ukládám aktuální stav submodulů...
+[INFO] Aktualizuji submoduly...
+[INFO] Žádné submoduly nebyly aktualizovány, ale vynucuji aktualizaci README
+[INFO] Aktuální verze addonů:
+[INFO]   PowerStreamPlan: 2.4.1
+[INFO]   Ingress Proxy: 1.0.1
+[SUCCESS] README.md aktualizováno s novými verzemi
+```
 **Příklad výstupu (s nepushnutými změnami):**
 ```
 [INFO] Začíná aktualizace submodulů...
