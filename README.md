@@ -35,6 +35,20 @@ Inteligentní plánovač a optimalizátor pro energetickou produkci a spotřebu.
 
 **Dokumentace:** [PowerStreamPlan](https://github.com/filipek92/power-stream-plan)
 
+### Ingress Proxy
+
+Pokročilý proxy server pro přístup k lokálním zařízením v síti prostřednictvím Home Assistant Ingress systému.
+
+**Funkce:**
+- Proxy přístup k lokálním zařízením
+- Automatické přepisování cest v HTML, CSS a JavaScript obsahu
+- Webové rozhraní pro správu zařízení
+- Volitelná Basic Auth autentizace
+- Možnost přidání vlastních HTTP hlaviček
+- Testování dostupnosti zařízení
+
+**Dokumentace:** [Ingress Proxy](https://github.com/filipek92/ingress-proxy)
+
 ## Přidání nového add-onu
 
 Návod na přidání nového add-onu najdete v [dokumentaci](./docs/add-addon.md).
