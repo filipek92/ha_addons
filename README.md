@@ -23,7 +23,7 @@
 
 | Add-on | Verze | Popis |
 |--------|-------|-------|
-| Ingress Proxy | 1.0.10 | Proxy server pro přístup k lokálním zařízením v síti s možností přepisování cest |
+| Ingress Proxy | 1.0.11 | Proxy server pro přístup k lokálním zařízením v síti s možností přepisování cest |
 | PowerStreamPlan | 2.4.1 | intelligent planner and optimizer for energy production and consumption |
 
 ## Přidání nového add-onu
