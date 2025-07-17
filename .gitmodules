@@ -1,3 +1,6 @@
 [submodule "PowerStreamPlan"]
 	path = power_stream_plan
 	url = https://github.com/filipek92/PowerStreamPlan.git
+[submodule "ingress-proxy"]
+	path = ingress-proxy
+	url = https://github.com/filipek92/ingress-proxy.git
