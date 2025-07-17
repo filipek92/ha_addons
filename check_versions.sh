@@ -42,30 +42,41 @@ get_current_commit() {
     fi
 }
 
+# Funkce pro získání názvu addonu z cesty
+get_addon_name() {
+    local repo_path="$1"
+    if [[ -f "$repo_path/config.yaml" ]]; then
+        grep "^name:" "$repo_path/config.yaml" | sed 's/name: *//g' | tr -d '"' | tr -d "'"
+    else
+        echo "$(basename "$repo_path")"
+    fi
+}
+
+# Funkce pro získání všech submodulů
+get_all_submodules() {
+    git config --file .gitmodules --get-regexp path | awk '{print $2}'
+}
+
 echo -e "${BLUE}=== Kontrola verzí Home Assistant Add-onů ===${NC}"
 echo
 
-# Získat informace o PowerStreamPlan
-echo -e "${GREEN}PowerStreamPlan:${NC}"
-power_stream_version=$(get_version_from_config "power_stream_plan/config.yaml")
-power_stream_tag=$(get_latest_git_tag "power_stream_plan")
-power_stream_commit=$(get_current_commit "power_stream_plan")
-
-echo "  Config verze: $power_stream_version"
-echo "  Poslední tag: $power_stream_tag"
-echo "  Aktuální commit: $power_stream_commit"
-echo
-
-# Získat informace o Ingress Proxy
-echo -e "${GREEN}Ingress Proxy:${NC}"
-ingress_proxy_version=$(get_version_from_config "ingress-proxy/config.yaml")
-ingress_proxy_tag=$(get_latest_git_tag "ingress-proxy")
-ingress_proxy_commit=$(get_current_commit "ingress-proxy")
-
-echo "  Config verze: $ingress_proxy_version"
-echo "  Poslední tag: $ingress_proxy_tag"
-echo "  Aktuální commit: $ingress_proxy_commit"
-echo
+# Projít všechny submoduly
+while IFS= read -r submodule_path; do
+    if [[ -n "$submodule_path" ]]; then
+        addon_name=$(get_addon_name "$submodule_path")
+        
+        echo -e "${GREEN}$addon_name (${submodule_path}):${NC}"
+        
+        config_version=$(get_version_from_config "$submodule_path/config.yaml")
+        latest_tag=$(get_latest_git_tag "$submodule_path")
+        current_commit=$(get_current_commit "$submodule_path")
+        
+        echo "  Config verze: $config_version"
+        echo "  Poslední tag: $latest_tag"
+        echo "  Aktuální commit: $current_commit"
+        echo
+    fi
+done <<< "$(get_all_submodules)"
 
 # Zobrazit stav submodulů
 echo -e "${YELLOW}Stav submodulů:${NC}"

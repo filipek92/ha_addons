@@ -42,17 +42,32 @@ get_version_from_config() {
 
 # Funkce pro aktualizaci README s tabulkou verzí
 update_readme() {
-    local power_stream_version="$1"
-    local ingress_proxy_version="$2"
+    local -A addon_versions=()
+    local -A addon_descriptions=()
+    
+    # Získat všechny submoduly a jejich informace
+    while IFS= read -r submodule_path; do
+        if [[ -n "$submodule_path" ]]; then
+            local addon_name=$(get_addon_name "$submodule_path")
+            local version=$(get_version_from_config "$submodule_path/config.yaml")
+            local description=$(get_addon_description "$submodule_path")
+            
+            addon_versions["$addon_name"]="$version"
+            addon_descriptions["$addon_name"]="$description"
+        fi
+    done <<< "$(get_all_submodules)"
     
     # Vytvořit tabulku verzí
     local version_table="## Aktuální verze
 
 | Add-on | Verze | Popis |
-|--------|-------|-------|
-| PowerStreamPlan | $power_stream_version | Inteligentní plánovač a optimalizátor pro energetickou produkci a spotřebu |
-| Ingress Proxy | $ingress_proxy_version | Proxy server pro přístup k lokálním zařízením v síti |"
-
+|--------|-------|-------|"
+    
+    for addon_name in "${!addon_versions[@]}"; do
+        version_table+="
+| $addon_name | ${addon_versions[$addon_name]} | ${addon_descriptions[$addon_name]} |"
+    done
+    
     # Najít pozici pro vložení tabulky (po sekci Instalace)
     local temp_file=$(mktemp)
     local in_addons_section=false
@@ -80,6 +95,31 @@ update_readme() {
     log_success "README.md aktualizováno s novými verzemi"
 }
 
+# Funkce pro získání názvu addonu z cesty
+get_addon_name() {
+    local repo_path="$1"
+    if [[ -f "$repo_path/config.yaml" ]]; then
+        grep "^name:" "$repo_path/config.yaml" | sed 's/name: *//g' | tr -d '"' | tr -d "'"
+    else
+        echo "$(basename "$repo_path")"
+    fi
+}
+
+# Funkce pro získání popisu addonu
+get_addon_description() {
+    local repo_path="$1"
+    if [[ -f "$repo_path/config.yaml" ]]; then
+        grep "^description:" "$repo_path/config.yaml" | sed 's/description: *//g' | tr -d '"' | tr -d "'"
+    else
+        echo "Home Assistant Add-on"
+    fi
+}
+
+# Funkce pro získání všech submodulů
+get_all_submodules() {
+    git config --file .gitmodules --get-regexp path | awk '{print $2}'
+}
+
 # Hlavní funkce
 main() {
     log_info "Začíná aktualizace submodulů..."
@@ -92,40 +132,50 @@ main() {
     
     # Uložit aktuální commit hashe submodulů před aktualizací
     log_info "Ukládám aktuální stav submodulů..."
-    local before_power_stream=$(git submodule status power_stream_plan | cut -c2-41)
-    local before_ingress_proxy=$(git submodule status ingress-proxy | cut -c2-41)
+    declare -A before_commits=()
+    
+    while IFS= read -r submodule_path; do
+        if [[ -n "$submodule_path" ]]; then
+            before_commits["$submodule_path"]=$(git submodule status "$submodule_path" | cut -c2-41)
+        fi
+    done <<< "$(get_all_submodules)"
     
     # Aktualizovat submoduly
     log_info "Aktualizuji submoduly..."
     git submodule update --remote --merge
     
-    # Získat nové commit hashe
-    local after_power_stream=$(git submodule status power_stream_plan | cut -c2-41)
-    local after_ingress_proxy=$(git submodule status ingress-proxy | cut -c2-41)
-    
     # Pole pro ukládání aktualizovaných addonů
     declare -a updated_addons=()
     
     # Zkontrolovat, které submoduly byly aktualizovány
-    if [[ "$before_power_stream" != "$after_power_stream" ]]; then
-        log_info "PowerStreamPlan byl aktualizován ($before_power_stream -> $after_power_stream)"
-        updated_addons+=("power_stream_plan")
-    fi
+    while IFS= read -r submodule_path; do
+        if [[ -n "$submodule_path" ]]; then
+            local after_commit=$(git submodule status "$submodule_path" | cut -c2-41)
+            local before_commit="${before_commits[$submodule_path]}"
+            
+            if [[ "$before_commit" != "$after_commit" ]]; then
+                local addon_name=$(get_addon_name "$submodule_path")
+                log_info "$addon_name byl aktualizován ($before_commit -> $after_commit)"
+                updated_addons+=("$addon_name")
+            fi
+        fi
+    done <<< "$(get_all_submodules)"
     
-    if [[ "$before_ingress_proxy" != "$after_ingress_proxy" ]]; then
-        log_info "Ingress Proxy byl aktualizován ($before_ingress_proxy -> $after_ingress_proxy)"
-        updated_addons+=("ingress-proxy")
-    fi
+    # Zobrazit aktuální verze všech addonů
+    log_info "Aktuální verze addonů:"
+    declare -A current_versions=()
     
-    # Získat aktuální verze z config.yaml souborů
-    local power_stream_version=$(get_version_from_config "power_stream_plan/config.yaml")
-    local ingress_proxy_version=$(get_version_from_config "ingress-proxy/config.yaml")
-    
-    log_info "PowerStreamPlan verze: $power_stream_version"
-    log_info "Ingress Proxy verze: $ingress_proxy_version"
+    while IFS= read -r submodule_path; do
+        if [[ -n "$submodule_path" ]]; then
+            local addon_name=$(get_addon_name "$submodule_path")
+            local version=$(get_version_from_config "$submodule_path/config.yaml")
+            current_versions["$addon_name"]="$version"
+            log_info "  $addon_name: $version"
+        fi
+    done <<< "$(get_all_submodules)"
     
     # Aktualizovat README
-    update_readme "$power_stream_version" "$ingress_proxy_version"
+    update_readme
     
     # Zkontrolovat, zda jsou nějaké změny k commitnutí
     if git diff --quiet && git diff --cached --quiet; then
@@ -141,11 +191,15 @@ main() {
     if [[ ${#updated_addons[@]} -gt 0 ]]; then
         commit_message="$commit_message - aktualizovány: $(IFS=', '; echo "${updated_addons[*]}")"
     fi
+    
     commit_message="$commit_message
 
-Aktuální verze:
-- PowerStreamPlan: $power_stream_version
-- Ingress Proxy: $ingress_proxy_version"
+Aktuální verze:"
+    
+    for addon_name in "${!current_versions[@]}"; do
+        commit_message="$commit_message
+- $addon_name: ${current_versions[$addon_name]}"
+    done
     
     # Vytvořit commit
     git commit -m "$commit_message"
