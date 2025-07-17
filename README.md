@@ -19,35 +19,19 @@
 5. Přidejte URL: `https://github.com/filipek92/ha_addons`
 6. Klikněte na **Add**
 
-## Add-ony
+## Aktuální verze
 
-Každý add-on je hostován ve vlastním Git repozitáři. Toto repository slouží pouze jako katalog/index.
+| Add-on | Verze | Popis |
+|--------|-------|-------|
+| PowerStreamPlan | 2.4.1 | Inteligentní plánovač a optimalizátor pro energetickou produkci a spotřebu |
+| Ingress Proxy | 1.0.0 | Proxy server pro přístup k lokálním zařízením v síti |
 
-### PowerStreamPlan
+## Aktuální verze
 
-Inteligentní plánovač a optimalizátor pro energetickou produkci a spotřebu.
-
-**Funkce:**
-- Plánování energetické produkce
-- Optimalizace spotřeby energie
-- Inteligentní řízení zařízení
-- Monitoring a analýza dat
-
-**Dokumentace:** [PowerStreamPlan](https://github.com/filipek92/power-stream-plan)
-
-### Ingress Proxy
-
-Pokročilý proxy server pro přístup k lokálním zařízením v síti prostřednictvím Home Assistant Ingress systému.
-
-**Funkce:**
-- Proxy přístup k lokálním zařízením
-- Automatické přepisování cest v HTML, CSS a JavaScript obsahu
-- Webové rozhraní pro správu zařízení
-- Volitelná Basic Auth autentizace
-- Možnost přidání vlastních HTTP hlaviček
-- Testování dostupnosti zařízení
-
-**Dokumentace:** [Ingress Proxy](https://github.com/filipek92/ingress-proxy)
+| Add-on | Verze | Popis |
+|--------|-------|-------|
+| PowerStreamPlan | 2.4.1 | Inteligentní plánovač a optimalizátor pro energetickou produkci a spotřebu |
+| Ingress Proxy | 1.0.0 | Proxy server pro přístup k lokálním zařízením v síti |
 
 ## Přidání nového add-onu
 
