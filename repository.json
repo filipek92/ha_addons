@@ -2,19 +2,5 @@
   "name": "Filip's Home Assistant Add-ons",
   "slug": "filipek92-ha-addons",
   "maintainer": "Filip Richter <filip.richter92@gmail.com>",
-  "url": "https://github.com/filipek92/ha_addons",
-  "addons": [
-    {
-      "slug": "power_stream_plan",
-      "name": "PowerStreamPlan",
-      "description": "Intelligent planner and optimizer for energy production and consumption",
-      "url": "https://github.com/filipek92/PowerStreamPlan/tree/master/power_stream_plan"
-    },
-    {
-      "slug": "ingress-proxy",
-      "name": "Ingress Proxy",
-      "description": "Proxy server pro přístup k lokálním zařízením v síti s možností přepisování cest",
-      "url": "https://github.com/filipek92/ingress-proxy"
-    }
-  ]
+  "url": "https://github.com/filipek92/ha_addons"
 }

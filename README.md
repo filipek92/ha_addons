@@ -37,6 +37,10 @@
 
 Návod na přidání nového add-onu najdete v [dokumentaci](./docs/add-addon.md).
 
+## Správa submodulů
+
+Pro správu a aktualizaci submodulů jsou k dispozici pomocné skripty. Více informací najdete v [dokumentaci skriptů](./SCRIPTS.md).
+
 ## Podpora
 
 Pro hlášení problémů nebo návrhy vytvořte issue na [GitHub](https://github.com/filipek92/ha_addons/issues).
