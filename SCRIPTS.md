@@ -10,6 +10,7 @@ Hlavní skript pro aktualizaci submodulů a údržbu repozitáře.
 
 **Funkce:**
 - Automaticky detekuje všechny submoduly v repozitáři
+- **Detekuje nepushnuté změny** a nabídne jejich push před aktualizací
 - Aktualizuje všechny submoduly na nejnovější verze z remote repozitářů
 - Detekuje, které submoduly byly aktualizovány
 - **Pouze při změnách:** Automaticky aktualizuje tabulku verzí v README.md pro všechny addony
@@ -20,7 +21,24 @@ Hlavní skript pro aktualizaci submodulů a údržbu repozitáře.
 
 **Použití:**
 ```bash
-./update_submodules.sh
+./update_submodules.sh [--auto-push]
+```
+
+**Parametry:**
+- `--auto-push`: Automaticky pushovat změny bez dotazu
+- `--help`: Zobrazit nápovědu
+
+**Příklad výstupu (s nepushnutými změnami):**
+```
+[INFO] Začíná aktualizace submodulů...
+[WARNING] Máte 3 nepushnutých commitů
+
+Chcete nejdříve pushovat existující změny? (y/N): y
+[SUCCESS] Existující změny byly pushnuty
+
+[INFO] Ukládám aktuální stav submodulů...
+[INFO] Aktualizuji submoduly...
+[INFO] Žádné submoduly nebyly aktualizovány
 ```
 
 **Příklad výstupu (bez změn):**
@@ -108,4 +126,6 @@ Stav submodulů:
 - Všechny změny jsou commitovány s popisnými zprávami
 - README.md je automaticky aktualizováno s aktuálními verzemi všech addonů
 - Před pushováním do remote repozitáře je vždy vyžádáno potvrzení
+- **Inteligentní správa změn** - automaticky detekuje nepushnuté commity a nabídne jejich push
 - Názvy a popisy addonů se automaticky načítají z config.yaml souborů
+- Podporuje parametr `--auto-push` pro plně automatizovaný workflow

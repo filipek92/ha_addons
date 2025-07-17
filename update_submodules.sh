@@ -2,7 +2,8 @@
 
 # Skript pro aktualizaci submodulů a README s aktuálními verzemi
 # Autor: Filip Richter
-# Použití: ./update_submodules.sh
+# Použití: ./update_submodules.sh [--auto-push]
+#   --auto-push: Automaticky pushovat změny bez dotazu
 
 set -e
 
@@ -29,6 +30,30 @@ log_warning() {
 log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
+
+# Parametry
+AUTO_PUSH=false
+
+# Zpracování parametrů
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --auto-push)
+            AUTO_PUSH=true
+            shift
+            ;;
+        -h|--help)
+            echo "Použití: $0 [--auto-push]"
+            echo "  --auto-push: Automaticky pushovat změny bez dotazu"
+            echo "  -h, --help: Zobrazit tuto nápovědu"
+            exit 0
+            ;;
+        *)
+            log_error "Neznámý parametr: $1"
+            echo "Použijte --help pro nápovědu"
+            exit 1
+            ;;
+    esac
+done
 
 # Funkce pro získání verze z config.yaml
 get_version_from_config() {
@@ -134,6 +159,20 @@ main() {
         exit 1
     fi
     
+    # Zkontrolovat, zda nejsou nepushnuté změny
+    local unpushed_commits=$(git log origin/main..HEAD --oneline 2>/dev/null | wc -l)
+    if [[ $unpushed_commits -gt 0 ]]; then
+        log_warning "Máte $unpushed_commits nepushnutých commitů"
+        echo
+        read -p "Chcete nejdříve pushovat existující změny? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            git push origin main
+            log_success "Existující změny byly pushnuty"
+        fi
+        echo
+    fi
+    
     # Uložit aktuální commit hashe submodulů před aktualizací
     log_info "Ukládám aktuální stav submodulů..."
     declare -A before_commits=()
@@ -214,15 +253,21 @@ Aktuální verze:"
     log_success "Commit vytvořen s následující zprávou:"
     echo "$commit_message"
     
-    # Zeptat se, zda má pushovat změny
+    # Zeptat se, zda má pushovat změny (pokud není --auto-push)
     echo
-    read -p "Chcete pushovat změny do remote repozitáře? (y/N): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if [[ "$AUTO_PUSH" == true ]]; then
         git push origin main
-        log_success "Změny byly pushnuty do remote repozitáře"
+        log_success "Změny byly automaticky pushnuty do remote repozitáře"
     else
-        log_warning "Změny nebyly pushnuty. Můžete je pushovat později pomocí: git push origin main"
+        read -p "Chcete pushovat změny do remote repozitáře? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            git push origin main
+            log_success "Změny byly pushnuty do remote repozitáře"
+        else
+            log_warning "Změny nebyly pushnuty. Můžete je pushovat později pomocí: git push origin main"
+            log_warning "Nebo spusťte skript s parametrem --auto-push pro automatické pushování"
+        fi
     fi
 }
 
