@@ -33,6 +33,7 @@ log_error() {
 
 # Parametry
 AUTO_PUSH=false
+FORCE_UPDATE=false
 
 # Zpracování parametrů
 while [[ $# -gt 0 ]]; do
@@ -41,9 +42,14 @@ while [[ $# -gt 0 ]]; do
             AUTO_PUSH=true
             shift
             ;;
+        --force-update)
+            FORCE_UPDATE=true
+            shift
+            ;;
         -h|--help)
-            echo "Použití: $0 [--auto-push]"
+            echo "Použití: $0 [--auto-push] [--force-update]"
             echo "  --auto-push: Automaticky pushovat změny bez dotazu"
+            echo "  --force-update: Vynutit aktualizaci README i bez změn submodulů"
             echo "  -h, --help: Zobrazit tuto nápovědu"
             exit 0
             ;;
@@ -204,10 +210,14 @@ main() {
         fi
     done <<< "$(get_all_submodules)"
     
-    # Pokud nebyly žádné změny, skončit
+    # Pokud nebyly žádné změny, skončit (pokud není --force-update)
     if [[ ${#updated_addons[@]} -eq 0 ]]; then
-        log_info "Žádné submoduly nebyly aktualizovány"
-        return 0
+        if [[ "$FORCE_UPDATE" == true ]]; then
+            log_info "Žádné submoduly nebyly aktualizovány, ale vynucuji aktualizaci README"
+        else
+            log_info "Žádné submoduly nebyly aktualizovány"
+            return 0
+        fi
     fi
     
     # Zobrazit aktuální verze všech addonů
@@ -236,7 +246,11 @@ main() {
     git add .
     
     # Vytvořit commit zprávu
-    local commit_message="Aktualizace submodulů - aktualizovány: $(IFS=', '; echo "${updated_addons[*]}")"
+    if [[ ${#updated_addons[@]} -gt 0 ]]; then
+        local commit_message="Aktualizace submodulů - aktualizovány: $(IFS=', '; echo "${updated_addons[*]}")"
+    else
+        local commit_message="Aktualizace README s aktuálními verzemi"
+    fi
     
     commit_message="$commit_message
 
