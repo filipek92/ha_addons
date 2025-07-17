@@ -161,6 +161,12 @@ main() {
         fi
     done <<< "$(get_all_submodules)"
     
+    # Pokud nebyly žádné změny, skončit
+    if [[ ${#updated_addons[@]} -eq 0 ]]; then
+        log_info "Žádné submoduly nebyly aktualizovány"
+        return 0
+    fi
+    
     # Zobrazit aktuální verze všech addonů
     log_info "Aktuální verze addonů:"
     declare -A current_versions=()
@@ -174,7 +180,7 @@ main() {
         fi
     done <<< "$(get_all_submodules)"
     
-    # Aktualizovat README
+    # Aktualizovat README pouze pokud byly změny
     update_readme
     
     # Zkontrolovat, zda jsou nějaké změny k commitnutí
@@ -187,10 +193,7 @@ main() {
     git add .
     
     # Vytvořit commit zprávu
-    local commit_message="Aktualizace submodulů"
-    if [[ ${#updated_addons[@]} -gt 0 ]]; then
-        commit_message="$commit_message - aktualizovány: $(IFS=', '; echo "${updated_addons[*]}")"
-    fi
+    local commit_message="Aktualizace submodulů - aktualizovány: $(IFS=', '; echo "${updated_addons[*]}")"
     
     commit_message="$commit_message
 
