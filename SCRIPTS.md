@@ -9,11 +9,13 @@ Tento repozitář obsahuje dva užitečné skripty pro práci s Home Assistant A
 Hlavní skript pro aktualizaci submodulů a údržbu repozitáře.
 
 **Funkce:**
+- Automaticky detekuje všechny submoduly v repozitáři
 - Aktualizuje všechny submoduly na nejnovější verze z remote repozitářů
 - Detekuje, které submoduly byly aktualizovány
-- Automaticky aktualizuje tabulku verzí v README.md
+- Automaticky aktualizuje tabulku verzí v README.md pro všechny addony
 - Vytvoří commit s popisem změn
 - Volitelně pushne změny do remote repozitáře
+- **Plně automatické** - při přidání nového submodulu se automaticky zahrne
 
 **Použití:**
 ```bash
@@ -26,11 +28,12 @@ Hlavní skript pro aktualizaci submodulů a údržbu repozitáře.
 [INFO] Ukládám aktuální stav submodulů...
 [INFO] Aktualizuji submoduly...
 [INFO] PowerStreamPlan byl aktualizován (44c2db0 -> a1b2c3d)
-[INFO] PowerStreamPlan verze: 2.4.2
-[INFO] Ingress Proxy verze: 1.0.0
+[INFO] Aktuální verze addonů:
+[INFO]   PowerStreamPlan: 2.4.2
+[INFO]   Ingress Proxy: 1.0.0
 [SUCCESS] README.md aktualizováno s novými verzemi
 [SUCCESS] Commit vytvořen s následující zprávou:
-Aktualizace submodulů - aktualizovány: power_stream_plan
+Aktualizace submodulů - aktualizovány: PowerStreamPlan
 
 Aktuální verze:
 - PowerStreamPlan: 2.4.2
@@ -44,10 +47,12 @@ Chcete pushovat změny do remote repozitáře? (y/N):
 Informativní skript pro kontrolu aktuálních verzí všech addonů.
 
 **Funkce:**
+- Automaticky detekuje všechny submoduly v repozitáři
 - Zobrazí verzi z config.yaml každého addonu
 - Ukáže poslední git tag z každého submodulu
 - Zobrazí aktuální commit hash
 - Ukáže celkový stav submodulů
+- **Plně automatické** - při přidání nového submodulu se automaticky zahrne
 
 **Použití:**
 ```bash
@@ -90,6 +95,8 @@ Stav submodulů:
 ## Poznámky
 
 - Skripty automaticky pracují s git submoduly a respektují jejich strukturu
+- **Automaticky detekují všechny submoduly** - při přidání nového addonu se automaticky zahrne
 - Všechny změny jsou commitovány s popisnými zprávami
-- README.md je automaticky aktualizováno s aktuálními verzemi
+- README.md je automaticky aktualizováno s aktuálními verzemi všech addonů
 - Před pushováním do remote repozitáře je vždy vyžádáno potvrzení
+- Názvy a popisy addonů se automaticky načítají z config.yaml souborů
