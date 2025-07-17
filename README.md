@@ -23,15 +23,8 @@
 
 | Add-on | Verze | Popis |
 |--------|-------|-------|
-| PowerStreamPlan | 2.4.1 | Inteligentní plánovač a optimalizátor pro energetickou produkci a spotřebu |
-| Ingress Proxy | 1.0.0 | Proxy server pro přístup k lokálním zařízením v síti |
-
-## Aktuální verze
-
-| Add-on | Verze | Popis |
-|--------|-------|-------|
-| PowerStreamPlan | 2.4.1 | Inteligentní plánovač a optimalizátor pro energetickou produkci a spotřebu |
-| Ingress Proxy | 1.0.0 | Proxy server pro přístup k lokálním zařízením v síti |
+| Ingress Proxy | 1.0.0 | Proxy server pro přístup k lokálním zařízením v síti s možností přepisování cest |
+| PowerStreamPlan | 2.4.1 | intelligent planner and optimizer for energy production and consumption |
 
 ## Přidání nového add-onu
 

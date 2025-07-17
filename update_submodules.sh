@@ -68,25 +68,29 @@ update_readme() {
 | $addon_name | ${addon_versions[$addon_name]} | ${addon_descriptions[$addon_name]} |"
     done
     
-    # Najít pozici pro vložení tabulky (po sekci Instalace)
+    # Vytvořit nový README bez existujících sekcí "Aktuální verze"
     local temp_file=$(mktemp)
-    local in_addons_section=false
+    local skip_version_section=false
     
     while IFS= read -r line; do
-        if [[ "$line" =~ ^##[[:space:]]*Add-ony ]]; then
-            # Vložit tabulku verzí před sekci Add-ony
-            echo "$version_table"
-            echo ""
-            in_addons_section=true
+        # Začátek sekce "Aktuální verze" - začneme přeskakovat
+        if [[ "$line" =~ ^##[[:space:]]*Aktuální[[:space:]]*verze ]]; then
+            skip_version_section=true
+            continue
         fi
         
-        # Pokud jsme v sekci Add-ony, přeskočit původní obsah až do další sekce
-        if [[ "$in_addons_section" == true ]]; then
-            if [[ "$line" =~ ^##[[:space:]]*(?!Add-ony) ]] || [[ "$line" =~ ^##[[:space:]]*Přidání[[:space:]]*nového[[:space:]]*add-onu ]]; then
-                in_addons_section=false
-                echo "$line"
-            fi
-        else
+        # Pokud jsme v sekci "Aktuální verze" a najdeme další sekci, skončíme přeskakování
+        if [[ "$skip_version_section" == true ]] && [[ "$line" =~ ^##[[:space:]]+ ]]; then
+            skip_version_section=false
+            # Vložit novou tabulku verzí před tuto sekci
+            echo "$version_table"
+            echo ""
+            echo "$line"
+            continue
+        fi
+        
+        # Pokud nepřeskakujeme sekci verzí, zapsat řádek
+        if [[ "$skip_version_section" == false ]]; then
             echo "$line"
         fi
     done < README.md > "$temp_file"
