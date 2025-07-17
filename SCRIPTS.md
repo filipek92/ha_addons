@@ -12,17 +12,26 @@ Hlavní skript pro aktualizaci submodulů a údržbu repozitáře.
 - Automaticky detekuje všechny submoduly v repozitáři
 - Aktualizuje všechny submoduly na nejnovější verze z remote repozitářů
 - Detekuje, které submoduly byly aktualizovány
-- Automaticky aktualizuje tabulku verzí v README.md pro všechny addony
-- Vytvoří commit s popisem změn
+- **Pouze při změnách:** Automaticky aktualizuje tabulku verzí v README.md pro všechny addony
+- **Pouze při změnách:** Vytvoří commit s popisem změn
 - Volitelně pushne změny do remote repozitáře
 - **Plně automatické** - při přidání nového submodulu se automaticky zahrne
+- **Optimalizované** - nic nedělá, pokud nebyly žádné aktualizace
 
 **Použití:**
 ```bash
 ./update_submodules.sh
 ```
 
-**Příklad výstupu:**
+**Příklad výstupu (bez změn):**
+```
+[INFO] Začíná aktualizace submodulů...
+[INFO] Ukládám aktuální stav submodulů...
+[INFO] Aktualizuji submoduly...
+[INFO] Žádné submoduly nebyly aktualizovány
+```
+
+**Příklad výstupu (s aktualizací):**
 ```
 [INFO] Začíná aktualizace submodulů...
 [INFO] Ukládám aktuální stav submodulů...
